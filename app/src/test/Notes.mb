@@ -1,0 +1,86 @@
+# [] Be able to play multiple games on one run, condition to exit
+# [] Reset the game?
+# [] Score counter > get points as you win
+# [] How to not repeat words? > array of indexes?
+      Esto habría que ponerlo en la función WordChoser, que lleve un array que haya un seguimiento
+      Habría que poner otra condición, termina el juego cuando no hay más palabras para elegir
+# [DONE] Don't take special characters or numbers, just letters
+# [] Add win/lose message before killing the app
+# [] Make the print stats print win/lose, take option to add message already passed
+
+
+  public Game(WordChoser word){
+    clearScreen();
+    // System.out.println("*".repeat(20)); // ###VISUAL AID
+    // System.out.println("INITIALIZE"); // ###VISUAL AID
+    wordToGuess = word.getRandomWordFromDictionary(); //Take the random word we will use
+    for (int i = 0; i < wordToGuess.length(); i++) { //First we decompose the word in characters and how many times they repeat
+      wordToGuess.charAt(i);
+      if (!wordToGuessPieces.containsKey(wordToGuess.charAt(i))){
+        wordToGuessPieces.put(wordToGuess.charAt(i), new ArrayList<Integer>(Arrays.asList(i)));
+      } else {
+        wordToGuessPieces.get(wordToGuess.charAt(i)).add(i);
+      }
+    } 
+    // System.out.println("Piezas: " + wordToGuessPieces); // ###VISUAL AID
+    winCounter = wordToGuessPieces.size(); // Initializing the number of different letters that need to be discovered to win
+    // System.out.println("Letras por descubrir para ganar: " + winCounter); // ###VISUAL AID
+    wordToGuessProgress.insert(0, "_".repeat(wordToGuess.length())); // Initializing hidden word
+    // System.out.println(wordToGuessPieces.get(wordToGuess.charAt(0))); // <<-- OLD initializer
+    getWordToGuess(wordToGuess.charAt(0)); //We reveal the first letter from the word
+    guessedLettersList.add(wordToGuess.charAt(0)); //Adds it to the list of discovered letters
+    // System.out.println("Letras por descubrir para ganar: " + winCounter); // ###VISUAL AID
+    printStats();
+    System.out.println();
+  }
+
+  // OLD MAIN DE GAME
+
+  // WordChoser palabro2 = new WordChoser();
+    // // System.out.println(palabro2.getRandomWordFromDictionary());
+    // Game juegosucio = new Game(palabro2);
+    // System.out.println("*".repeat(20));
+    // System.out.println("MAIN");
+    // //System.out.println("*".repeat(20));
+    // System.out.println(juegosucio.wordToGuess);
+    // System.out.println("*".repeat(20));
+    // System.out.println("GETWORDTOGUESS");
+    // ArrayList<Character> testDeArray = new ArrayList<>(Arrays.asList(
+    //   'A','e','i','a','r','E','L','O','p','V','k', 'Z', 'W'
+    // ));
+    // for (Character letraDeTesteo:testDeArray){
+    //   System.out.println("");
+    //   System.out.println("");
+    //   System.out.println("- ".repeat(5) + "INPUT: " + letraDeTesteo + " -".repeat(5));
+    //   juegosucio.guessLetter(letraDeTesteo);
+    //   juegosucio.printStats();
+    // }
+
+
+    --------------- MAIN ONE PLAYER
+
+    public static void main(String[] args) {
+    Game letsplay = new Game();
+    App nuevapp = new App();
+    do{
+      letsplay.resetGame();
+      do{
+        nuevapp.takeInput(letsplay);
+        if (letsplay.isGameWon()){
+          App.score = App.score + 10*letsplay.failCounter;
+          if (letsplay.failCounter == letsplay.roundsPerGame){
+            App.score = App.score + 50;
+          }
+        }
+      } while (!letsplay.isGameWon() && !letsplay.isGameLost());
+      try {
+        System.out.println();
+        System.out.println();
+        System.out.print("\u001B[47m\u001B[30mPress enter to continue.\u001B[0m");
+        Scanner letterInputScanner = new Scanner(System.in);
+        letterInputScanner.nextLine();
+      } catch (Exception e) {}
+      nuevapp.wannaPlayAgain();
+    } while (App.playAgain);
+    Game.clearScreen();
+  }
